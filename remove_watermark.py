@@ -121,8 +121,10 @@ class WatermarkRemover:
         print("Draw a rectangle around the watermark using mouse")
         print("Left-click and drag to select, then press Enter or double-click")
 
-        roi = cv2.selectROI("Select Watermark", frame, fromCenter=False, showCrosshair=True)
-        cv2.destroyAllWindows()
+        try:
+            roi = cv2.selectROI("Select Watermark", frame, fromCenter=False, showCrosshair=True)
+        finally:
+            cv2.destroyAllWindows()
 
         if roi[2] == 0 or roi[3] == 0:
             print("Error: No region selected")
@@ -135,8 +137,10 @@ class WatermarkRemover:
             while True:
                 response = input("Select another watermark? (y/n): ").lower().strip()
                 if response == "y":
-                    roi = cv2.selectROI("Select Watermark", frame, fromCenter=False, showCrosshair=True)
-                    cv2.destroyAllWindows()
+                    try:
+                        roi = cv2.selectROI("Select Watermark", frame, fromCenter=False, showCrosshair=True)
+                    finally:
+                        cv2.destroyAllWindows()
                     if roi[2] > 0 and roi[3] > 0:
                         self.rois.append(roi)
                         print(f"Selected ROI: x={roi[0]}, y={roi[1]}, w={roi[2]}, h={roi[3]}")
@@ -160,13 +164,12 @@ class WatermarkRemover:
         for roi in self.rois:
             tracker = cv2.TrackerCSRT_create()
             x, y, w, h = roi
-            success = tracker.init(frame, (x, y, w, h))
-
-            if not success:
-                print(f"Error: Failed to initialize tracker for ROI {roi}")
+            try:
+                tracker.init(frame, (x, y, w, h))
+                self.trackers.append(tracker)
+            except Exception as e:
+                print(f"Error: Failed to initialize tracker for ROI {roi}: {e}")
                 return False
-
-            self.trackers.append(tracker)
 
         print(f"Initialized {len(self.trackers)} tracker(s)")
         return True
