@@ -52,12 +52,31 @@ cd watermark_removewr
 pip install -r requirements.txt
 ```
 
-3. Verify installation:
+3. Verify installation (CLI version):
 ```bash
 python remove_watermark.py --help
 ```
 
-## Usage
+## Quick Start - Web Version (Browser)
+
+The easiest way to use this tool is through the web interface:
+
+```bash
+python app.py
+```
+
+Then open your browser and go to: **http://localhost:5000**
+
+### Web Interface Features
+- 📤 Drag and drop video upload
+- 🎯 Visual watermark selection by drawing on the first frame
+- ⚙️ Configure protection zones and inpainting method
+- 📊 Real-time processing status
+- 💾 One-click download of cleaned video
+
+No command line needed! Just upload, select, and download.
+
+## Usage - CLI Version
 
 ### Basic Usage
 

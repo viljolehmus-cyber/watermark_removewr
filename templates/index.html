@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watermark Remover</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 Watermark Remover</h1>
+            <p>Remove watermarks from your videos easily</p>
+        </header>
+
+        <main>
+            <!-- Step 1: Upload -->
+            <section id="uploadSection" class="section active">
+                <h2>Step 1: Upload Video</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Drag and drop your video here</p>
+                        <p class="text-muted">or click to select</p>
+                    </div>
+                    <input type="file" id="videoInput" accept="video/*" style="display: none;">
+                </div>
+                <div id="uploadProgress" class="progress-container" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="uploadProgressFill" style="width: 0%"></div>
+                    </div>
+                    <p id="uploadStatus">Uploading... 0%</p>
+                </div>
+            </section>
+
+            <!-- Step 2: Select Watermark -->
+            <section id="selectionSection" class="section" style="display: none;">
+                <h2>Step 2: Select Watermark</h2>
+                <p class="info">Draw a rectangle around the watermark on the video preview below</p>
+
+                <div class="canvas-container">
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <img id="frameImage" style="max-width: 100%; display: block; margin: 0 auto;">
+                    <div id="canvasOverlay" class="canvas-overlay"></div>
+                </div>
+
+                <div class="roi-info">
+                    <p id="roiCount">Watermarks selected: 0</p>
+                    <button id="clearButton" class="btn btn-secondary" style="display: none;">Clear Selection</button>
+                    <button id="undoButton" class="btn btn-secondary" style="display: none;">Undo Last</button>
+                </div>
+            </section>
+
+            <!-- Step 3: Configure Settings -->
+            <section id="settingsSection" class="section" style="display: none;">
+                <h2>Step 3: Configure Settings</h2>
+
+                <div class="settings-grid">
+                    <div class="setting">
+                        <label for="protectBottom">Protect Bottom Area (%)</label>
+                        <input type="range" id="protectBottom" min="0" max="50" value="25" step="5">
+                        <span id="protectBottomValue">25%</span>
+                        <p class="text-muted">Protects bottom area (for subtitles)</p>
+                    </div>
+
+                    <div class="setting">
+                        <label for="method">Inpainting Method</label>
+                        <select id="method">
+                            <option value="telea">TELEA (faster)</option>
+                            <option value="ns">Navier-Stokes (better quality)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="video-info" id="videoInfo" style="display: none;">
+                    <h3>Video Information</h3>
+                    <p>Resolution: <span id="videoRes"></span></p>
+                    <p>FPS: <span id="videoFps"></span></p>
+                    <p>Duration: <span id="videoDuration"></span>s</p>
+                </div>
+            </section>
+
+            <!-- Step 4: Processing -->
+            <section id="processingSection" class="section" style="display: none;">
+                <h2>Step 4: Processing</h2>
+                <div class="processing-container">
+                    <div class="spinner"></div>
+                    <p id="processingStatus">Processing your video...</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="processingProgressFill" style="width: 0%"></div>
+                    </div>
+                    <p id="processingTime">This may take a few minutes...</p>
+                </div>
+            </section>
+
+            <!-- Step 5: Download -->
+            <section id="downloadSection" class="section" style="display: none;">
+                <h2>Step 5: Download Result</h2>
+                <div class="success-message">
+                    <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <p>Watermark removal completed!</p>
+                </div>
+                <div class="button-group">
+                    <a id="downloadButton" href="#" class="btn btn-primary">Download Video</a>
+                    <button id="processAnotherButton" class="btn btn-secondary">Process Another Video</button>
+                </div>
+            </section>
+
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons">
+                <button id="backButton" class="btn btn-secondary" style="display: none;">← Back</button>
+                <button id="nextButton" class="btn btn-primary" style="display: none;">Next →</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by OpenCV | Works on Chrome, Firefox, Safari, and Edge</p>
+        </footer>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Error</h3>
+                <button class="close-btn" onclick="closeErrorModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeErrorModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
